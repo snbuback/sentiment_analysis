@@ -1,0 +1,16 @@
+Original:
+
+
+
+Com Stemmer em portugues:
+  # Test Cases for positivo=1318
+  # Correct=850
+  % Correct=0.644917
+  # Test Cases for negativo=362
+  # Correct=263
+  % Correct=0.726519
+
+  # Total Test Cases =1680
+  # Correct=1113
+  % Correct=0.662500
+

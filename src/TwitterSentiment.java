@@ -3,12 +3,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import ptstemmer.Stemmer;
+import ptstemmer.exceptions.PTStemmerException;
+
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.StatusStream;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import util.PortugueseStemmerTokenizerFactory;
 
 import com.aliasi.classify.Classification;
 import com.aliasi.classify.Classified;
@@ -19,15 +23,16 @@ import com.aliasi.lm.NGramProcessLM;
 import com.aliasi.tokenizer.EnglishStopTokenizerFactory;
 import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.LowerCaseTokenizerFactory;
+import com.aliasi.tokenizer.PorterStemmerTokenizerFactory;
 
 public class TwitterSentiment {
 	
-	private static final String BASE_PATH = "/data/snbuback/workspace/SentimentAnalysis/scripts/";
+	private static final String BASE_PATH = "/data/snbuback/workspace/SentimentAnalysis/dataset/twitter/";
 
 	String[] mCategories = { "positivo", "negativo" };
 	NaiveBayesClassifier mClassifier;
 
-	TwitterSentiment(String[] args) {
+	TwitterSentiment(String[] args) throws PTStemmerException {
 		System.out.println("\nTwitter Sentiment");
 		mClassifier = new NaiveBayesClassifier(mCategories, 
 				new LowerCaseTokenizerFactory(IndoEuropeanTokenizerFactory.INSTANCE),
@@ -64,8 +69,8 @@ public class TwitterSentiment {
 
 	void evaluate() throws IOException {
 		System.out.println("\nEvaluating.");
-		int numTests = 0;
-		int numCorrect = 0;
+		int numTests[] = new int[mCategories.length];
+		int numCorrect[] = new int[mCategories.length];
 		for (int i = 0; i < mCategories.length; ++i) {
 			String category = mCategories[i];
 			BufferedReader reader = new BufferedReader(new FileReader(
@@ -75,26 +80,35 @@ public class TwitterSentiment {
 				if (review == null) {
 					break;
 				}
-				++numTests;
+				++numTests[i];
 				JointClassification cls = mClassifier.classify(review);
 				if (cls.bestCategory().equals(category)) {
-					++numCorrect;
+					++numCorrect[i];
 				} else {
-					System.out.format("%s - pos(%f) neg(%f): %s\n", cls
-							.bestCategory(), cls
-							.conditionalProbability("positivo"), cls
-							.conditionalProbability("negativo"), review);
+//					System.out.format("%s - pos(%f) neg(%f): %s\n", cls
+//							.bestCategory(), cls
+//							.conditionalProbability("positivo"), cls
+//							.conditionalProbability("negativo"), review);
 				}
 			}
 		}
-		System.out.println("  # Test Cases=" + numTests);
-		System.out.println("  # Correct=" + numCorrect);
-		System.out.println("  % Correct=" + ((double) numCorrect)
-				/ (double) numTests);
+		
+		int totalTests = 0, totalCorrect = 0;
+		for (int i=0; i<numTests.length; i++) {
+			System.out.format("  # Test Cases for %s=%d\n", mCategories[i], numTests[i]);
+			System.out.format("  # Correct=%d\n", numCorrect[i]);
+			System.out.format("  %% Correct=%f\n", ((double) numCorrect[i]) / (double) numTests[i]);
+			totalTests += numTests[i];
+			totalCorrect += numCorrect[i];
+		}
+		System.out.format("\n  # Total Test Cases =%d\n", totalTests);
+		System.out.format("  # Correct=%d\n", totalCorrect);
+		System.out.format("  %% Correct=%f\n", ((double) totalCorrect) / (double) totalTests);
 	}
 
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception {
+		
 		final TwitterSentiment ts = new TwitterSentiment(args);
 		ts.train();
 		ts.evaluate();
