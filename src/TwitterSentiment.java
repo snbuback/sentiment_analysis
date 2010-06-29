@@ -25,20 +25,25 @@ import com.aliasi.tokenizer.IndoEuropeanTokenizerFactory;
 import com.aliasi.tokenizer.LowerCaseTokenizerFactory;
 import com.aliasi.tokenizer.PorterStemmerTokenizerFactory;
 
+@SuppressWarnings("unchecked")
 public class TwitterSentiment {
-	
-	private static final String BASE_PATH = "/data/snbuback/workspace/SentimentAnalysis/dataset/twitter/";
+
+	private static final String BASE_PATH = "/Users/silvano/Documents/workspace/sentiment/dataset/twitter3/";
 
 	String[] mCategories = { "positivo", "negativo" };
-	NaiveBayesClassifier mClassifier;
+	DynamicLMClassifier mClassifier;
 
 	TwitterSentiment(String[] args) throws PTStemmerException {
 		System.out.println("\nTwitter Sentiment");
-		mClassifier = new NaiveBayesClassifier(mCategories, 
-				new LowerCaseTokenizerFactory(IndoEuropeanTokenizerFactory.INSTANCE),
-				1);
-//		mClassifier = DynamicLMClassifier
-//		.createNGramProcess(mCategories, nGram);
+		mClassifier = new NaiveBayesClassifier(mCategories,
+				new PortugueseStemmerTokenizerFactory(
+						new LowerCaseTokenizerFactory(
+								IndoEuropeanTokenizerFactory.INSTANCE)),
+				// new
+				// LowerCaseTokenizerFactory(IndoEuropeanTokenizerFactory.INSTANCE),
+				0);
+//		 mClassifier = DynamicLMClassifier
+//		 .createNGramProcess(mCategories, 8);
 	}
 
 	void train() throws IOException {
@@ -48,8 +53,7 @@ public class TwitterSentiment {
 		for (int i = 0; i < mCategories.length; ++i) {
 			String category = mCategories[i];
 			Classification classification = new Classification(category);
-			BufferedReader reader = new BufferedReader(new FileReader(
-					BASE_PATH + mCategories[i] + "-treino.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader(BASE_PATH	+ mCategories[i] + "-treino.txt"));
 			while (true) {
 				++numTrainingCases;
 				String review = reader.readLine();
@@ -57,8 +61,7 @@ public class TwitterSentiment {
 					break;
 				}
 				numTrainingChars += review.length();
-				Classified<CharSequence> classified = new Classified<CharSequence>(
-						review, classification);
+				Classified<CharSequence> classified = new Classified<CharSequence>(review, classification);
 				mClassifier.handle(classified);
 			}
 			reader.close();
@@ -73,8 +76,8 @@ public class TwitterSentiment {
 		int numCorrect[] = new int[mCategories.length];
 		for (int i = 0; i < mCategories.length; ++i) {
 			String category = mCategories[i];
-			BufferedReader reader = new BufferedReader(new FileReader(
-					BASE_PATH + mCategories[i] + "-teste.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader(BASE_PATH
+					+ mCategories[i] + "-teste.txt"));
 			while (true) {
 				String review = reader.readLine();
 				if (review == null) {
@@ -85,30 +88,33 @@ public class TwitterSentiment {
 				if (cls.bestCategory().equals(category)) {
 					++numCorrect[i];
 				} else {
-//					System.out.format("%s - pos(%f) neg(%f): %s\n", cls
-//							.bestCategory(), cls
-//							.conditionalProbability("positivo"), cls
-//							.conditionalProbability("negativo"), review);
+					// System.out.format("%s - pos(%f) neg(%f): %s\n", cls
+					// .bestCategory(), cls
+					// .conditionalProbability("positivo"), cls
+					// .conditionalProbability("negativo"), review);
 				}
 			}
 		}
-		
+
 		int totalTests = 0, totalCorrect = 0;
-		for (int i=0; i<numTests.length; i++) {
-			System.out.format("  # Test Cases for %s=%d\n", mCategories[i], numTests[i]);
+		for (int i = 0; i < numTests.length; i++) {
+			System.out.format("  # Test Cases for %s=%d\n", mCategories[i],
+					numTests[i]);
 			System.out.format("  # Correct=%d\n", numCorrect[i]);
-			System.out.format("  %% Correct=%f\n", ((double) numCorrect[i]) / (double) numTests[i]);
+			System.out.format("  %% Correct=%f\n", ((double) numCorrect[i])
+					/ (double) numTests[i]);
 			totalTests += numTests[i];
 			totalCorrect += numCorrect[i];
 		}
 		System.out.format("\n  # Total Test Cases =%d\n", totalTests);
 		System.out.format("  # Correct=%d\n", totalCorrect);
-		System.out.format("  %% Correct=%f\n", ((double) totalCorrect) / (double) totalTests);
+		System.out.format("  %% Correct=%f\n", ((double) totalCorrect)
+				/ (double) totalTests);
 	}
 
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception {
-		
+
 		final TwitterSentiment ts = new TwitterSentiment(args);
 		ts.train();
 		ts.evaluate();
@@ -120,10 +126,10 @@ public class TwitterSentiment {
 				JointClassification cls = ts.mClassifier.classify(status
 						.getText());
 				System.out.format("%s - pos(%f) neg(%f): %s\n", cls
-						.bestCategory(), cls
-						.conditionalProbability("positivo"), cls
-						.conditionalProbability("negativo"), status
-						.getText());
+						.bestCategory(),
+						cls.conditionalProbability("positivo"), cls
+								.conditionalProbability("negativo"), status
+								.getText());
 			}
 
 			public void onDeletionNotice(
@@ -141,9 +147,9 @@ public class TwitterSentiment {
 				.getInstance("snbuback_test", "mucuxi");
 		StatusStream stream = twitterStream.getFilterStream(0, null,
 				new String[] { ":)", ":(" });
-		/*while (true) {
-			stream.next(listener);
-		}*/
+		/*
+		 * while (true) { stream.next(listener); }
+		 */
 
 	}
 
