@@ -1,16 +1,91 @@
-Original:
+01 - Original:
+# Test Cases for positivo=1318
+# Correct=867
+% Correct=0.657815
+# Test Cases for negativo=362
+# Correct=264
+% Correct=0.729282
+
+# Total Test Cases =1680
+# Correct=1131
+% Correct=0.673214
+
+20 - Com Stemmer em portugues:
+# Test Cases for positivo=1318
+# Correct=860
+% Correct=0.652504
+# Test Cases for negativo=362
+# Correct=268
+% Correct=0.740331
+
+# Total Test Cases =1680
+# Correct=1128
+% Correct=0.671429
+
+21 - (20) + removendo acentos
+# Test Cases for positivo=1318
+# Correct=861
+% Correct=0.653263
+# Test Cases for negativo=362
+# Correct=272
+% Correct=0.751381
+
+# Total Test Cases =1680
+# Correct=1133
+% Correct=0.674405
 
 
+30 - Com Stemmer e removendo acentos e usando base de palavras de treino
+# Test Cases for positivo=1318
+# Correct=919
+% Correct=0.697269
+# Test Cases for negativo=362
+# Correct=195
+% Correct=0.538674
 
-Com Stemmer em portugues:
-  # Test Cases for positivo=1318
-  # Correct=850
-  % Correct=0.644917
-  # Test Cases for negativo=362
-  # Correct=263
-  % Correct=0.726519
+# Total Test Cases =1680
+# Correct=1114
+% Correct=0.663095
 
-  # Total Test Cases =1680
-  # Correct=1113
-  % Correct=0.662500
+
+----------------- Com nova base -----> Maior
+Training.
+  # Training Cases=130418
+  # Training Chars=8741839
+
+100 - simples
+# Test Cases for positivo=98904
+# Correct=63366
+% Correct=0.640682
+# Test Cases for negativo=31512
+# Correct=18720
+% Correct=0.594059
+
+# Total Test Cases =130416
+# Correct=82086
+% Correct=0.629417
+
+110 - Invertendo o conjunto de teste/treino
+# Test Cases for positivo=500
+# Correct=433
+% Correct=0.866000
+# Test Cases for negativo=500
+# Correct=259
+% Correct=0.518000
+
+# Total Test Cases =1000
+# Correct=692
+% Correct=0.692000
+
+120 - Stemmer + remov. acentos
+# Test Cases for positivo=500
+# Correct=425
+% Correct=0.850000
+# Test Cases for negativo=500
+# Correct=267
+% Correct=0.534000
+
+# Total Test Cases =1000
+# Correct=692
+% Correct=0.692000
 

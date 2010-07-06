@@ -17,7 +17,7 @@ public class PolarityBasic {
 
     PolarityBasic(String[] args) {
         System.out.println("\nBASIC POLARITY DEMO");
-        mPolarityDir = new File(args[0],"txt_sentoken_pt");
+        mPolarityDir = new File("/Users/silvano/Documents/workspace/sentiment/dataset/","txt_sentoken_pt");
         System.out.println("\nData Directory=" + mPolarityDir);
         mCategories = mPolarityDir.list();
         int nGram = 8;

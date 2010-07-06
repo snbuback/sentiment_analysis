@@ -1,0 +1,5 @@
+#!/bin/bash
+
+awk 'BEGIN { srand() } { print rand() "\t" $0 }' $* | sort -n | cut -f2-
+
+
